@@ -1,24 +1,22 @@
 module.exports = {
-  'env': {
-    'browser': true,
-    'es2021': true,
+  env: {
+    browser: true,
+    es2021: true,
   },
-  'extends': [
+  extends: [
+    'eslint:recommended',
     'plugin:react/recommended',
-    'google',
+    'airbnb',
   ],
-  'parserOptions': {
-    'ecmaFeatures': {
-      'jsx': true,
-    },
-    'ecmaVersion': 12,
-    'sourceType': 'module',
+  parserOptions: {
+    ecmaVersion: 12,
+    sourceType: 'module',
   },
-  'plugins': [
+  plugins: [
     'react',
   ],
-  'rules': {
-    'linebreak-style': ["error", "windows"],
-    'max-len': 0
+  rules: {
+    'linebreak-style': 0,
+    'react/jsx-filename-extension': [1, { "extensions": [".js", ".jsx"] }],
   },
 };
