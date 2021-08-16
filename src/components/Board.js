@@ -5,8 +5,8 @@ import './Board.css';
 const Board = () => {
   return (
     <div>
-      <h1 className="text-center m-4">Andrew's To-Do List</h1>
-      
+      <h1 className="text-center m-4">Andrew`&apos;`s To-Do List</h1>
+
       <div className="d-flex justify-content-center">
         <div className="card m-4 w-25 shadow-sm">
           <div className="card-body">
@@ -20,12 +20,12 @@ const Board = () => {
           </div>
 
           <div className="d-flex justify-content-center">
-            <Popup 
+            <Popup
               trigger={<div className="btn-primary btn-circle text-center m-3">+</div>}
               modal
               nested
             >
-              {close => (
+              {(close) => (
                 <div className="w-25 h-25">
                   <button className="close" onClick={close}>
                     &times;
@@ -55,7 +55,7 @@ const Board = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Board;
