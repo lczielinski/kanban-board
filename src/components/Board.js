@@ -1,27 +1,10 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Popup from 'reactjs-popup';
 import './Board.css';
 
 const Board = () => {
-  const [showPopup, setShowPopup]  = useState(false);
-
-  const CardPopup = () => {
-    if (showPopup) {
-      return (
-        <Popup modal>
-          <span> Modal content </span>
-        </Popup>
-      )
-    }
-  }
-
-  const addCard = () => {
-    setShowPopup(true);
-  }
-
   return (
     <div>
-      {CardPopup}
       <h1 className="text-center m-4">Andrew's To-Do List</h1>
       
       <div className="d-flex justify-content-center">
@@ -37,7 +20,25 @@ const Board = () => {
           </div>
 
           <div className="d-flex justify-content-center">
-            <div className="btn-primary btn-circle text-center m-3" onClick={addCard}>+</div>
+            <Popup 
+              trigger={<div className="btn-primary btn-circle text-center m-3">+</div>}
+              modal
+              nested
+            >
+              {close => (
+                <div className="w-25 h-25">
+                  <button className="close" onClick={close}>
+                    &times;
+                  </button>
+                  <div> Modal Title </div>
+                  <div>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque, a nostrum.
+                    Dolorem, repellat quidem ut, minima sint vel eveniet quibusdam voluptates
+                    delectus doloremque, explicabo tempore dicta adipisci fugit amet dignissimos?
+                  </div>
+                </div>
+              )}
+            </Popup>
           </div>
         </div>
 
