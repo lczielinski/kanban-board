@@ -1,30 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useStateRef } from 'use-state-ref';
 import { useForm } from 'react-hook-form';
 import './Board.css';
 
 const Board = () => {
   const [toDoCards, setToDoCards] = useState([]);
+  const toDoCardsRef = useStateRef(toDoCards);
   const [numToDoCards, setNumToDoCards] = useState(0);
+
+  useEffect(() => {
+    toDoCardsRef.current = toDoCards;
+  }, [toDoCards]);
 
   const {
     register,
     handleSubmit,
-    // formState: { errors },
+    reset,
+    formState: { errors },
   } = useForm();
+
+  const deleteToDoCard = (index) => {
+    const copy = [];
+    for (let i = 0; i < toDoCardsRef.current.length; i += 1) {
+      if (index !== toDoCardsRef.current[i].props.id) {
+        copy.push(toDoCardsRef.current[i]);
+      }
+    }
+    setToDoCards(copy);
+  };
 
   const addToDoCard = (data) => {
     setToDoCards([...toDoCards,
-      <div className="card m-3 shadow-sm" key={numToDoCards}>
+      <div className="card m-3 shadow-sm" key={numToDoCards} id={numToDoCards}>
         <div className="card-body">
-          <h5 className="card-title">{ data.cardTitle }</h5>
+          <div className="d-flex justify-content-between">
+            <h5 className="card-title">{ data.cardTitle }</h5>
+            <div
+              type="button"
+              role="button"
+              tabIndex="-1"
+              className="close ml-2"
+              onClick={() => deleteToDoCard(numToDoCards)}
+              onKeyDown={() => deleteToDoCard(numToDoCards)}
+            >
+              <span>&times;</span>
+            </div>
+          </div>
           <p className="card-text">{ data.cardDescription }</p>
         </div>
       </div>,
     ]);
-
     setNumToDoCards(numToDoCards + 1);
-
-    console.log(toDoCards);
+    window.$('#modal').modal('toggle');
+    reset();
   };
 
   return (
@@ -50,7 +78,9 @@ const Board = () => {
                       className="form-control my-1"
                       id="cardTitle"
                       placeholder="Title"
+                      autoFocus="autofocus"
                     />
+                    <p>{errors.cardTitle && '*Card title is required'}</p>
                   </label>
                 </div>
                 <div className="form-group row">

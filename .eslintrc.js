@@ -18,6 +18,7 @@ module.exports = {
   rules: {
     'linebreak-style': 'off',
     'react/jsx-filename-extension': [1, { "extensions": [".js", ".jsx"] }],
-    "react/jsx-props-no-spreading": [1, {"html": "ignore"}]
+    'react/jsx-props-no-spreading': [1, { "html": "ignore" }],
+    'jsx-a11y/no-autofocus': 0,
   },
 };
