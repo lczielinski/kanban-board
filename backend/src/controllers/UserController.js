@@ -4,10 +4,11 @@ const router = require('express').Router();
 router.route('/register').post( async (req, res) => {
   const prevUser = await User.findOne({ username: req.body.username });
   if (prevUser) {
-    return res.status(400).json("User with email exists. ");
+    return res.status(400).json("Username exists.");
   };
 
   const newUser = new User({
+    name: req.body.name,
     username: req.body.username,
     password: req.body.password,
   });
@@ -18,7 +19,7 @@ router.route('/register').post( async (req, res) => {
 });
 
 router.route('/login').post((req, res) => {
-
+  
 });
 
 router.route('/delete/:id').delete((req, res) => {
