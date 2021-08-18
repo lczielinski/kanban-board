@@ -1,14 +1,9 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "backend for kanban-board",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": "true",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
