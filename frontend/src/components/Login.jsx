@@ -25,7 +25,12 @@ const Login = () => {
       .post('http://localhost:4000/users/login', user)
       .then((response) => {
         console.log(response);
-        history.push("/board");
+        history.push({
+          pathname: "/board",
+          state: {
+            _id: response.data._id
+          }
+        });
       })
       .catch((error) => {
         if (error.response && error.response.status == 404) {

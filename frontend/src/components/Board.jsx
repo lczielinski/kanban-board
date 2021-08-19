@@ -1,13 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useStateRef } from 'use-state-ref';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 import './Board.css';
 
 const Board = () => {
   const [toDoCards, setToDoCards] = useState([]);
   const toDoCardsRef = useStateRef(toDoCards);
   const [numToDoCards, setNumToDoCards] = useState(0);
+  const [user, setUser] = useState(null);
+
+  const history = useHistory();
+  const userId = history.location.state._id;
+  
+  useEffect(() => {
+    axios
+      .post('http://localhost:4000/users/get', {
+        _id: userId
+      })
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        history.push('/login');
+      });
+  }, []);
+
+  
 
   useEffect(() => {
     toDoCardsRef.current = toDoCards;
@@ -30,7 +51,33 @@ const Board = () => {
     setToDoCards(copy);
   };
 
-  const addToDoCard = (data) => {
+  /* if (user) {
+    const tempCards = [];
+    for (const card of user.toDoCards) {
+      tempCards.push(
+        <div className="card m-3 shadow-sm" key={numToDoCards} id={numToDoCards} draggable="true">
+        <div className="card-body">
+          <div className="d-flex justify-content-between">
+            <h5 className="card-title">{ card.title }</h5>
+            <div
+              type="button"
+              role="button"
+              tabIndex="-1"
+              className="close ml-2"
+              onClick={() => deleteToDoCard(numToDoCards)}
+              onKeyDown={() => deleteToDoCard(numToDoCards)}
+            >
+              <span>&times;</span>
+            </div>
+          </div>
+          <p className="card-text">{ card.description }</p>
+        </div>
+      </div>
+      )
+    }
+  } */
+
+  /* const addToDoCard = (data) => {
     setToDoCards([...toDoCards,
       <div className="card m-3 shadow-sm" key={numToDoCards} id={numToDoCards} draggable="true">
         <div className="card-body">
@@ -54,7 +101,11 @@ const Board = () => {
     setNumToDoCards(numToDoCards + 1);
     window.$('#modal').modal('toggle');
     reset();
-  };
+  }; */
+
+  if (!user) {
+    return <div className="text-center">loading...</div>;
+  }
 
   return (
     <div>
@@ -68,7 +119,9 @@ const Board = () => {
                 <span>&times;</span>
               </div>
             </div>
-            <form className="form-group" onSubmit={handleSubmit(addToDoCard)}>
+            <form className="form-group" 
+            //onSubmit={handleSubmit(addToDoCard)}
+            >
               <div className="modal-body">
                 <div className="form-group row">
                   <label htmlFor="cardTitle" className="col m-1">
@@ -109,7 +162,7 @@ const Board = () => {
       </div>
 
       {/* Title with person's name */}
-      <h1 className="text-center m-4">&apos;s To-Do List</h1>
+      <h1 className="text-center m-4">{user.name}&apos;s To-Do List</h1>
 
       <div className="d-flex justify-content-center">
         {/* To Do List */}

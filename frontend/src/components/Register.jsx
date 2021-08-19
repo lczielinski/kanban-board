@@ -26,7 +26,12 @@ const Register = () => {
       .post('http://localhost:4000/users/register', user)
       .then((response) => {
         console.log(response);
-        history.push("/board");
+        history.push({
+          pathname: "/board",
+          state: {
+            userId: response.data._id
+          }
+        });
       })
       .catch((error) => {
         if (error.response && error.response.status == 400) {

@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const router = require('express').Router();
 
-router.route('/register').post( async (req, res) => {
+router.route('/register').post(async (req, res) => {
   try {
     const prevUser = await User.findOne({ username: req.body.username.toLowerCase() });
     if (prevUser) {
@@ -14,26 +14,43 @@ router.route('/register').post( async (req, res) => {
       password: req.body.password,
     });
   
-    newUser.save()
-      .then(user => res.status(200).json(user))
-      .catch(err => res.status(500).json(err));
+    await newUser.save();
+    
+    const tempUser = {
+      _id: user._id,
+      name: user.name,
+      username: user.username,
+      toDoTasks: user.toDoTasks,
+      inProgressTasks: user.inProgressTasks,
+      completedTasks: user.completedTasks
+    }
+    return res.status(200).json(tempUser);
 
   } catch (err) {
     return res.status(500).json(err);
   }
 });
 
-router.route('/login').post( async (req, res) => {
+router.route('/login').post(async (req, res) => {
   try {
     const user = await User.findOne({ 
       username: req.body.username.toLowerCase(), 
       password: req.body.password
     }); 
 
-    if (!user) {
-      return res.status(404).json('Username and password not found.');
+    if (user) {
+      const tempUser = {
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        toDoTasks: user.toDoTasks,
+        inProgressTasks: user.inProgressTasks,
+        completedTasks: user.completedTasks
+      }
+
+      return res.status(200).json(tempUser);
     } else {
-      return res.status(200).json(user);
+      res.status(404).json('Username and password not found.');
     }
 
   } catch (err) {
@@ -41,10 +58,36 @@ router.route('/login').post( async (req, res) => {
   }
 });
 
-router.route('/delete/:id').delete((req, res) => {
-  User.deleteOne({ _id: req.params.id })
-    .then(success => res.json('Success! User deleted.'))
-    .catch(err => res.status(400).json('Error! ' + err))
+router.route('/get').post(async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.body._id });
+    if (!user) {
+      return res.status(404).json('Could not find user.');
+    }
+
+    const tempUser = {
+      _id: user._id,
+      name: user.name,
+      username: user.username,
+      toDoTasks: user.toDoTasks,
+      inProgressTasks: user.inProgressTasks,
+      completedTasks: user.completedTasks
+    }
+    return res.status(200).json(tempUser);
+
+  } catch (err) {
+    return res.status(404).json('Could not find user.');
+  }
+});
+
+router.route('/delete/:id').delete(async (req, res) => {
+  try {
+    await User.deleteOne({ _id: req.params.id });
+    return res.status(200);
+    
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 });
 
 module.exports = router;
