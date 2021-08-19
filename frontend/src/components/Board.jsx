@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStateRef } from 'use-state-ref';
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import './Board.css';
 
 const Board = () => {
