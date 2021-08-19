@@ -3,14 +3,14 @@ const router = require('express').Router();
 
 router.route('/register').post( async (req, res) => {
   try {
-    const prevUser = await User.findOne({ username: req.body.username });
+    const prevUser = await User.findOne({ username: req.body.username.toLowerCase() });
     if (prevUser) {
       return res.status(400).json('Username exists.');
     };
   
     const newUser = new User({
       name: req.body.name,
-      username: req.body.username,
+      username: req.body.username.toLowerCase(),
       password: req.body.password,
     });
   
@@ -26,7 +26,7 @@ router.route('/register').post( async (req, res) => {
 router.route('/login').post( async (req, res) => {
   try {
     const user = await User.findOne({ 
-      username: req.body.username, 
+      username: req.body.username.toLowerCase(), 
       password: req.body.password
     }); 
 
@@ -35,7 +35,7 @@ router.route('/login').post( async (req, res) => {
     } else {
       return res.status(200).json(user);
     }
-    
+
   } catch (err) {
     return res.status(500).json(err);
   }

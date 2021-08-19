@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import './Page.css';
 
@@ -9,7 +9,11 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors
   } = useForm();
+
+  const history = useHistory();
 
   const loginUser = (data) => {
     const user = {
@@ -21,9 +25,14 @@ const Login = () => {
       .post('http://localhost:4000/users/login', user)
       .then((response) => {
         console.log(response);
+        history.push("/board");
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response && error.response.status == 404) {
+          setError("form", { message: "*Email or password is incorrect!" });
+        } else {
+          setError("form", { message: "*There was a server error processing your request. Please try again later." });
+        }
       });
   };
   
@@ -31,6 +40,7 @@ const Login = () => {
     <div className="container d-block text-center justify-content-center">
       <h4 className="mb-3">Log In</h4>
       <form onSubmit={handleSubmit(loginUser)}>
+        <p>{errors.form && errors.form.message}</p>
         <div className="form-group margin-b-0">
           <label className="text-left" htmlFor="username">
             Username
@@ -57,7 +67,7 @@ const Login = () => {
             <p>{errors.password && '*Password is required'}</p>
           </label>
         </div>
-        <button type="submit" className="btn btn-primary">Log In</button>
+        <button type="submit" className="btn btn-primary" onClick={() => clearErrors()}>Log In</button>
         <div className="m-2">
           <Link to="/register" className="text-body">...or create a new account</Link>
         </div>

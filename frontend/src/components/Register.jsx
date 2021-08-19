@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import './Page.css';
 
@@ -9,7 +9,11 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors
   } = useForm();
+
+  const history = useHistory();
 
   const registerUser = (data) => {
     const user = {
@@ -22,9 +26,14 @@ const Register = () => {
       .post('http://localhost:4000/users/register', user)
       .then((response) => {
         console.log(response);
+        history.push("/board");
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response && error.response.status == 400) {
+          setError("form", { message: "*Username already taken" });
+        } else {
+          setError("form", { message: "*There was a server error processing your request. Please try again later." });
+        }
       });
   };
 
@@ -32,7 +41,8 @@ const Register = () => {
     <div className="container d-block text-center justify-content-center">
       <h4 className="mb-3">Register</h4>
       <form onSubmit={handleSubmit(registerUser)}>
-      <div className="form-group margin-b-0">
+        <p>{errors.form && errors.form.message}</p>
+        <div className="form-group margin-b-0">
           <label className="text-left" htmlFor="name">
             Name
             <input
@@ -71,7 +81,7 @@ const Register = () => {
             <p>{errors.password && '*Password is required'}</p>
           </label>
         </div>
-        <button type="submit" className="btn btn-primary">Register</button>
+        <button type="submit" className="btn btn-primary" onClick={() => clearErrors()}>Register</button>
         <div className="m-2">
           <Link to="/" className="text-body">...or log in</Link>
         </div>
