@@ -12,8 +12,13 @@ const Board = () => {
   const [user, setUser] = useState(null);
 
   const history = useHistory();
+  if (!history.location.state) {
+    history.push('/login');
+  }
+
   const userId = history.location.state._id;
   
+  // set up local user state on login
   useEffect(() => {
     axios
       .post('http://localhost:4000/users/get', {
@@ -28,7 +33,37 @@ const Board = () => {
       });
   }, []);
 
-  
+  // update local cards
+  useEffect(() => {
+    if (user) {
+      console.log(user);
+      console.log(user.data);
+      const tempCards = [];
+      user.toDoTasks.forEach((card) => {
+        tempCards.push(
+          <div className="card m-3 shadow-sm" key={card._id} id={card._id} draggable="true">
+          <div className="card-body">
+            <div className="d-flex justify-content-between">
+              <h5 className="card-title">{ card.title }</h5>
+              <div
+                type="button"
+                role="button"
+                tabIndex="-1"
+                className="close ml-2"
+                onClick={() => deleteToDoCard(card._id)}
+                onKeyDown={() => deleteToDoCard(card._id)}
+              >
+                <span>&times;</span>
+              </div>
+            </div>
+            <p className="card-text">{ card.description }</p>
+          </div>
+        </div>
+      )});
+      setToDoCards(tempCards);
+      setNumToDoCards(numToDoCards + 1);
+    }
+  }, [user]);
 
   useEffect(() => {
     toDoCardsRef.current = toDoCards;
@@ -41,70 +76,41 @@ const Board = () => {
     formState: { errors },
   } = useForm();
 
-  const deleteToDoCard = (index) => {
-    const copy = [];
-    for (let i = 0; i < toDoCardsRef.current.length; i += 1) {
-      if (index !== toDoCardsRef.current[i].props.id) {
-        copy.push(toDoCardsRef.current[i]);
-      }
-    }
-    setToDoCards(copy);
+  const deleteToDoCard = (taskId) => {
+    axios
+      .post('http://localhost:4000/users/delete-task', {
+        userId: userId,
+        taskId: taskId
+      })
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        history.push('/login');
+      });
   };
 
-  /* if (user) {
-    const tempCards = [];
-    for (const card of user.toDoCards) {
-      tempCards.push(
-        <div className="card m-3 shadow-sm" key={numToDoCards} id={numToDoCards} draggable="true">
-        <div className="card-body">
-          <div className="d-flex justify-content-between">
-            <h5 className="card-title">{ card.title }</h5>
-            <div
-              type="button"
-              role="button"
-              tabIndex="-1"
-              className="close ml-2"
-              onClick={() => deleteToDoCard(numToDoCards)}
-              onKeyDown={() => deleteToDoCard(numToDoCards)}
-            >
-              <span>&times;</span>
-            </div>
-          </div>
-          <p className="card-text">{ card.description }</p>
-        </div>
-      </div>
-      )
-    }
-  } */
-
-  /* const addToDoCard = (data) => {
-    setToDoCards([...toDoCards,
-      <div className="card m-3 shadow-sm" key={numToDoCards} id={numToDoCards} draggable="true">
-        <div className="card-body">
-          <div className="d-flex justify-content-between">
-            <h5 className="card-title">{ data.cardTitle }</h5>
-            <div
-              type="button"
-              role="button"
-              tabIndex="-1"
-              className="close ml-2"
-              onClick={() => deleteToDoCard(numToDoCards)}
-              onKeyDown={() => deleteToDoCard(numToDoCards)}
-            >
-              <span>&times;</span>
-            </div>
-          </div>
-          <p className="card-text">{ data.cardDescription }</p>
-        </div>
-      </div>,
-    ]);
-    setNumToDoCards(numToDoCards + 1);
+  const addToDoCard = (data) => {
+    axios
+      .post('http://localhost:4000/users/add-task', {
+        _id: userId,
+        title: data.cardTitle,
+        description: data.cardDescription
+      })
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        history.push('/login');
+      });
     window.$('#modal').modal('toggle');
     reset();
-  }; */
+  }
 
   if (!user) {
-    return <div className="text-center">loading...</div>;
+    return <div className="text-center">Loading...</div>;
   }
 
   return (
@@ -120,8 +126,7 @@ const Board = () => {
               </div>
             </div>
             <form className="form-group" 
-            //onSubmit={handleSubmit(addToDoCard)}
-            >
+              onSubmit={handleSubmit(addToDoCard)}>
               <div className="modal-body">
                 <div className="form-group row">
                   <label htmlFor="cardTitle" className="col m-1">
@@ -151,7 +156,6 @@ const Board = () => {
                   </label>
                 </div>
               </div>
-
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="submit" className="btn btn-primary">Add Card</button>
