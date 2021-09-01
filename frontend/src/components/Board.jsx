@@ -41,12 +41,20 @@ const Board = () => {
               role="button"
               tabIndex="-1"
               className="close ml-2"
-              onClick={() => deleteToDoCard(card._id)}
+              onClick={() => deleteCard(card._id)}
             >
               <span>&times;</span>
             </div>
           </div>
-          <p className="card-text">{ card.description }</p>
+          { card.description && <p className="card-text">{ card.description }</p> }
+          <div className="d-flex justify-content-between">
+          <div type="button" className="btn arrow" onClick={() => revertCard(card._id)}>
+              <span>&#10229;</span>
+            </div>
+            <div type="button" className="btn arrow" onClick={() => moveCard(card._id)}>
+              <span>&#10230;</span>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -61,7 +69,7 @@ const Board = () => {
             pushCard(toDo, card);
           } else if (card.status == 1) {
             pushCard(inProgress, card);
-          } else if (card.state == 2) {
+          } else if (card.status == 2) {
             pushCard(completed, card);
           }
       });
@@ -79,7 +87,7 @@ const Board = () => {
   } = useForm();
 
   // modifying tasks
-  const deleteToDoCard = (taskId) => {
+  const deleteCard = (taskId) => {
     axios
       .post("http://localhost:4000/users/delete-task", {
         userId: userId,
@@ -93,7 +101,7 @@ const Board = () => {
       });
   };
 
-  const addToDoCard = (data) => {
+  const addCard = (data) => {
     axios
       .post("http://localhost:4000/users/add-task", {
         userId: userId,
@@ -108,7 +116,39 @@ const Board = () => {
       });
     window.$("#modal").modal("toggle");
     reset();
-  }
+  };
+
+  const moveCard = (taskId) => {
+    axios
+      .post("http://localhost:4000/users/move-task", {
+        userId: userId,
+        taskId: taskId,
+        forward: true
+      })
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        history.push("/login");
+      });
+  };
+
+  const revertCard = (taskId) => {
+    axios
+      .post("http://localhost:4000/users/move-task", {
+        userId: userId,
+        taskId: taskId,
+        forward: false
+      })
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        history.push("/login");
+      });
+  };
 
   const logout = () => {
     history.push({
@@ -134,7 +174,7 @@ const Board = () => {
               </div>
             </div>
             <form className="form-group" 
-              onSubmit={handleSubmit(addToDoCard)}>
+              onSubmit={handleSubmit(addCard)}>
               <div className="modal-body">
                 <div className="form-group row">
                   <label htmlFor="cardTitle" className="col m-1">
@@ -183,10 +223,9 @@ const Board = () => {
         {/* To Do List */}
         <div className="card m-4 w-25 shadow-sm">
           <div className="card-body">
-            <h4 className="card-title text-center">To Do</h4>
+            <h4 className="card-title text-center mb-5">To Do</h4>
+            { toDoTasks }
           </div>
-
-          { toDoTasks }
 
           {/* Button to trigger modal */}
           <div className="d-flex justify-content-center">
@@ -199,19 +238,17 @@ const Board = () => {
         {/* In Progress List */}
         <div className="card m-4 w-25 shadow-sm">
           <div className="card-body">
-            <h4 className="card-title text-center">In Progress</h4>
+            <h4 className="card-title text-center mb-5">In Progress</h4>
+            { inProgressTasks }
           </div>
-
-          { inProgressTasks }
         </div>
 
         {/* Done List */}
         <div className="card m-4 w-25 shadow-sm">
           <div className="card-body">
-            <h4 className="card-title text-center">Done</h4>
+            <h4 className="card-title text-center mb-5">Done</h4>
+            { completedTasks }
           </div>
-
-          { completedTasks }
         </div>
       </div>
     </div>

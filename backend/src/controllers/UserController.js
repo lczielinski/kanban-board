@@ -75,7 +75,7 @@ router.route("/add-task").post(async (req, res) => {
     });
     await newTask.save();
 
-    await User.findByIdAndUpdate(req.body.userId, {
+    await User.updateOne({ _id: req.body.userId }, {
       $push: { tasks: newTask }
     });
 
@@ -95,11 +95,59 @@ router.route("/add-task").post(async (req, res) => {
 
 router.route("/delete-task").post(async (req, res) => {
   try {
-    await User.findByIdAndUpdate(req.body.userId, {
+    await User.updateOne({ _id: req.body.userId }, {
       $pull: { tasks: { _id: req.body.taskId } }
     });
 
     await Task.deleteOne({ _id: req.body.taskId });
+
+    const user = await User.findOne({ 
+      _id: req.body.userId
+    });
+
+    if (user) {
+      return res.status(200).json(user);
+    } else {
+      return res.status(404).json("Could not find user.");
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json(err);
+  }
+});
+
+router.route("/move-task").post(async (req, res) => {
+  try {
+    const task = await Task.findOne({ _id: req.body.taskId });
+    const status = task.status;
+
+    await User.updateOne({ _id: req.body.userId }, {
+      $pull: { tasks: { _id: req.body.taskId } }
+    });
+
+    if (req.body.forward) {
+      if (status == 0 || status == 1) {
+        await Task.updateOne({ _id: req.body.taskId }, { 
+          $set: { status: status + 1 }
+        });
+        await User.updateOne({ _id: req.body.userId }, {
+          $push: { tasks: await Task.findOne({ _id:req.body.taskId }) }
+        });
+      } else {
+        await Task.deleteOne({ _id: req.body.taskId });
+      }
+    } else {
+      if (status == 1 || status == 2) {
+        await Task.updateOne({ _id: req.body.taskId }, { 
+          $set: { status: status - 1 }
+        });
+        await User.updateOne({ _id: req.body.userId }, {
+          $push: { tasks: await Task.findOne({ _id:req.body.taskId }) }
+        });
+      } else {
+        await Task.deleteOne({ _id: req.body.taskId });
+      }
+    }
 
     const user = await User.findOne({ 
       _id: req.body.userId

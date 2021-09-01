@@ -8,3 +8,7 @@
 .btn-circle:hover {
   cursor: pointer;
 }
+.arrow {
+  font-size: 25px;
+  padding: 0;
+}
