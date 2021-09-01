@@ -1,14 +1,14 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const source = process.env.ATLAS_CONNECTION;
 mongoose.connect(source, {
@@ -18,7 +18,7 @@ mongoose.connect(source, {
 });
 
 const connection = mongoose.connection;
-connection.once('open', () => {
+connection.once("open", () => {
   console.log("DB connected");
 });
 
@@ -27,8 +27,6 @@ app.listen(PORT, () => {
   console.log("Server is running on http://localhost:" + PORT);
 });
 
-const userRoutes = require('./src/controllers/UserController');
-app.use('/users', userRoutes);
-
-const taskRoutes = require('./src/controllers/TaskController');
-app.use('/tasks', taskRoutes);
+// routes
+const userRoutes = require("./src/controllers/UserController");
+app.use("/users", userRoutes);

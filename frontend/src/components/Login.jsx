@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Link, useHistory } from 'react-router-dom';
-import axios from 'axios';
-import './Page.css';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useHistory } from "react-router-dom";
+import axios from "axios";
+import "./Page.css";
 
 const Login = () => {
   const {
@@ -22,14 +22,11 @@ const Login = () => {
     }; 
 
     axios
-      .post('http://localhost:4000/users/login', user)
+      .post("http://localhost:4000/users/login", user)
       .then((response) => {
-        console.log(response);
         history.push({
           pathname: "/board",
-          state: {
-            _id: response.data._id
-          }
+          state: { _id: response.data._id }
         });
       })
       .catch((error) => {
@@ -51,12 +48,12 @@ const Login = () => {
             Username
             <input
               type="text"
-              {...register('username', { required: true })}
+              {...register("username", { required: true })}
               className="form-control"
               id="username"
               placeholder="Username"
             />
-            <p>{errors.username && '*Username is required'}</p>
+            <p>{errors.username && "*Username is required"}</p>
           </label>
         </div>
         <div className="form-group margin-b-0">
@@ -64,12 +61,12 @@ const Login = () => {
             Password
             <input
               type="password"
-              {...register('password', { required: true })}
+              {...register("password", { required: true })}
               className="form-control"
               id="password"
               placeholder="Password"
             />
-            <p>{errors.password && '*Password is required'}</p>
+            <p>{errors.password && "*Password is required"}</p>
           </label>
         </div>
         <button type="submit" className="btn btn-primary" onClick={() => clearErrors()}>Log In</button>

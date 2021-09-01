@@ -1,73 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { useStateRef } from 'use-state-ref';
-import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
-import axios from 'axios';
-import './Board.css';
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
+import "./Board.css";
 
 const Board = () => {
-  const [toDoCards, setToDoCards] = useState([]);
-  const toDoCardsRef = useStateRef(toDoCards);
-  const [numToDoCards, setNumToDoCards] = useState(0);
   const [user, setUser] = useState(null);
-
+  const [toDoTasks, setToDoTasks] = useState([]);
+  const [inProgressTasks, setInProgressTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
+  
   const history = useHistory();
   if (!history.location.state) {
-    history.push('/login');
+    history.push("/login");
+    return null;
   }
 
   const userId = history.location.state._id;
-  
+
   // set up local user state on login
   useEffect(() => {
     axios
-      .post('http://localhost:4000/users/get', {
-        _id: userId
-      })
+      .get("http://localhost:4000/users/get/" + userId)
       .then((response) => {
         setUser(response.data);
       })
-      .catch((error) => {
-        console.log(error);
-        history.push('/login');
+      .catch(() => {
+        history.push("/login");
       });
   }, []);
+
+  const pushCard = (arr, card) => {
+    arr.push(
+      <div className="card m-3 shadow-sm" key={card._id} id={card._id} draggable="true">
+        <div className="card-body">
+          <div className="d-flex justify-content-between">
+            <h5 className="card-title">{ card.title }</h5>
+            <div
+              type="button"
+              role="button"
+              tabIndex="-1"
+              className="close ml-2"
+              onClick={() => deleteToDoCard(card._id)}
+            >
+              <span>&times;</span>
+            </div>
+          </div>
+          <p className="card-text">{ card.description }</p>
+        </div>
+      </div>
+    )
+  };
 
   // update local cards
   useEffect(() => {
     if (user) {
-      console.log(user);
-      console.log(user.data);
-      const tempCards = [];
-      user.toDoTasks.forEach((card) => {
-        tempCards.push(
-          <div className="card m-3 shadow-sm" key={card._id} id={card._id} draggable="true">
-          <div className="card-body">
-            <div className="d-flex justify-content-between">
-              <h5 className="card-title">{ card.title }</h5>
-              <div
-                type="button"
-                role="button"
-                tabIndex="-1"
-                className="close ml-2"
-                onClick={() => deleteToDoCard(card._id)}
-                onKeyDown={() => deleteToDoCard(card._id)}
-              >
-                <span>&times;</span>
-              </div>
-            </div>
-            <p className="card-text">{ card.description }</p>
-          </div>
-        </div>
-      )});
-      setToDoCards(tempCards);
-      setNumToDoCards(numToDoCards + 1);
+      const toDo = [], inProgress = [], completed = [];
+      user.tasks.forEach((card) => {
+          if (card.status == 0) {
+            pushCard(toDo, card);
+          } else if (card.status == 1) {
+            pushCard(inProgress, card);
+          } else if (card.state == 2) {
+            pushCard(completed, card);
+          }
+      });
+      setToDoTasks(toDo);
+      setInProgressTasks(inProgress);
+      setCompletedTasks(completed);
     }
   }, [user]);
-
-  useEffect(() => {
-    toDoCardsRef.current = toDoCards;
-  }, [toDoCards]);
 
   const {
     register,
@@ -76,37 +78,43 @@ const Board = () => {
     formState: { errors },
   } = useForm();
 
+  // modifying tasks
   const deleteToDoCard = (taskId) => {
     axios
-      .post('http://localhost:4000/users/delete-task', {
+      .post("http://localhost:4000/users/delete-task", {
         userId: userId,
         taskId: taskId
       })
       .then((response) => {
         setUser(response.data);
       })
-      .catch((error) => {
-        console.log(error);
-        history.push('/login');
+      .catch(() => {
+        history.push("/login");
       });
   };
 
   const addToDoCard = (data) => {
     axios
-      .post('http://localhost:4000/users/add-task', {
-        _id: userId,
+      .post("http://localhost:4000/users/add-task", {
+        userId: userId,
         title: data.cardTitle,
         description: data.cardDescription
       })
       .then((response) => {
         setUser(response.data);
       })
-      .catch((error) => {
-        console.log(error);
-        history.push('/login');
+      .catch(() => {
+        history.push("/login");
       });
-    window.$('#modal').modal('toggle');
+    window.$("#modal").modal("toggle");
     reset();
+  }
+
+  const logout = () => {
+    history.push({
+      pathname: "/login",
+      state: {}
+    });
   }
 
   if (!user) {
@@ -133,13 +141,13 @@ const Board = () => {
                     Task title
                     <input
                       type="text"
-                      {...register('cardTitle', { required: true })}
+                      {...register("cardTitle", { required: true })}
                       className="form-control my-1"
                       id="cardTitle"
                       placeholder="Title"
                       autoFocus="autofocus"
                     />
-                    <p>{errors.cardTitle && '*Card title is required'}</p>
+                    <p>{errors.cardTitle && "*Card title is required"}</p>
                   </label>
                 </div>
                 <div className="form-group row">
@@ -148,7 +156,7 @@ const Board = () => {
                     <textarea
                       row="3"
                       type="text"
-                      {...register('cardDescription')}
+                      {...register("cardDescription")}
                       className="form-control my-1"
                       id="cardBody"
                       placeholder="Description..."
@@ -165,8 +173,11 @@ const Board = () => {
         </div>
       </div>
 
-      {/* Title with person's name */}
+      {/* Title with person"s name */}
       <h1 className="text-center m-4">{user.name}&apos;s To-Do List</h1>
+      <div className="d-flex justify-content-center">
+        <div type="button" className="btn" onClick={logout}>Log Out</div>
+      </div>
 
       <div className="d-flex justify-content-center">
         {/* To Do List */}
@@ -175,8 +186,7 @@ const Board = () => {
             <h4 className="card-title text-center">To Do</h4>
           </div>
 
-          {/* To Do Cards */}
-          { toDoCards }
+          { toDoTasks }
 
           {/* Button to trigger modal */}
           <div className="d-flex justify-content-center">
@@ -191,6 +201,8 @@ const Board = () => {
           <div className="card-body">
             <h4 className="card-title text-center">In Progress</h4>
           </div>
+
+          { inProgressTasks }
         </div>
 
         {/* Done List */}
@@ -198,6 +210,8 @@ const Board = () => {
           <div className="card-body">
             <h4 className="card-title text-center">Done</h4>
           </div>
+
+          { completedTasks }
         </div>
       </div>
     </div>

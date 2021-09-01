@@ -1,11 +1,11 @@
-import Board from './components/Board';
-import Login from './components/Login';
-import Register from './components/Register';
+import Board from "./components/Board";
+import Login from "./components/Login";
+import Register from "./components/Register";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-} from 'react-router-dom';
+} from "react-router-dom";
 
 const App = () => {
   return (

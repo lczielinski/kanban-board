@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Link, useHistory } from 'react-router-dom';
-import axios from 'axios';
-import './Page.css';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useHistory } from "react-router-dom";
+import axios from "axios";
+import "./Page.css";
 
 const Register = () => {
   const {
@@ -23,13 +23,12 @@ const Register = () => {
     }; 
 
     axios
-      .post('http://localhost:4000/users/register', user)
-      .then((response) => {
-        console.log(response);
+      .post("http://localhost:4000/users/register", user)
+      .then(() => {
         history.push("/login");
       })
       .catch((error) => {
-        if (error.response && error.response.status == 400) {
+        if (error.response && error.response.status == 409) {
           setError("form", { message: "*Username already taken" });
         } else {
           setError("form", { message: "*There was a server error processing your request. Please try again later." });
@@ -47,12 +46,12 @@ const Register = () => {
             Name
             <input
               type="text"
-              {...register('name', { required: true })}
+              {...register("name", { required: true })}
               className="form-control"
               id="name"
               placeholder="Name"
             />
-            <p>{errors.name && '*Name is required'}</p>
+            <p>{errors.name && "*Name is required"}</p>
           </label>
         </div>
         <div className="form-group margin-b-0">
@@ -60,12 +59,12 @@ const Register = () => {
             Username
             <input
               type="text"
-              {...register('username', { required: true })}
+              {...register("username", { required: true })}
               className="form-control"
               id="username"
               placeholder="Username"
             />
-            <p>{errors.username && '*Username is required'}</p>
+            <p>{errors.username && "*Username is required"}</p>
           </label>
         </div>
         <div className="form-group margin-b-0">
@@ -73,12 +72,12 @@ const Register = () => {
             Password
             <input
               type="password"
-              {...register('password', { required: true })}
+              {...register("password", { required: true })}
               className="form-control"
               id="password"
               placeholder="Password"
             />
-            <p>{errors.password && '*Password is required'}</p>
+            <p>{errors.password && "*Password is required"}</p>
           </label>
         </div>
         <button type="submit" className="btn btn-primary" onClick={() => clearErrors()}>Register</button>
