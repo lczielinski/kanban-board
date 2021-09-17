@@ -21,7 +21,7 @@ const Board = () => {
   // set up local user state on login
   useEffect(() => {
     axios
-      .get("http://localhost:4000/users/get/" + userId)
+      .get("/users/get/" + userId)
       .then((response) => {
         setUser(response.data);
       })
@@ -89,7 +89,7 @@ const Board = () => {
   // modifying tasks
   const deleteCard = (taskId) => {
     axios
-      .post("http://localhost:4000/users/delete-task", {
+      .post("/users/delete-task", {
         userId: userId,
         taskId: taskId
       })
@@ -103,7 +103,7 @@ const Board = () => {
 
   const addCard = (data) => {
     axios
-      .post("http://localhost:4000/users/add-task", {
+      .post("/users/add-task", {
         userId: userId,
         title: data.cardTitle,
         description: data.cardDescription
@@ -120,7 +120,7 @@ const Board = () => {
 
   const moveCard = (taskId) => {
     axios
-      .post("http://localhost:4000/users/move-task", {
+      .post("/users/move-task", {
         userId: userId,
         taskId: taskId,
         forward: true
@@ -136,7 +136,7 @@ const Board = () => {
 
   const revertCard = (taskId) => {
     axios
-      .post("http://localhost:4000/users/move-task", {
+      .post("/users/move-task", {
         userId: userId,
         taskId: taskId,
         forward: false

@@ -22,7 +22,7 @@ const Login = () => {
     }; 
 
     axios
-      .post("http://localhost:4000/users/login", user)
+      .post("/users/login", user)
       .then((response) => {
         history.push({
           pathname: "/board",

@@ -23,7 +23,7 @@ const Register = () => {
     }; 
 
     axios
-      .post("http://localhost:4000/users/register", user)
+      .post("/users/register", user)
       .then(() => {
         history.push("/login");
       })
