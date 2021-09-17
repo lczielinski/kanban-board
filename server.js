@@ -28,5 +28,5 @@ app.listen(PORT, () => {
 });
 
 // routes
-const userRoutes = require("./src/controllers/UserController");
+const userRoutes = require("./controllers/UserController");
 app.use("/users", userRoutes);
