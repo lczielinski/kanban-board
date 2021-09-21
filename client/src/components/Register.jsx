@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
-import "./Page.css";
 
 const Register = () => {
   const {
@@ -37,12 +36,12 @@ const Register = () => {
   };
 
   return (
-    <div className="container d-block text-center justify-content-center">
-      <h4 className="mb-3">Register</h4>
+    <div className="d-flex flex-column align-items-center mt-5 text-center">
+      <h4 className="mb-2">Register</h4>
       <form onSubmit={handleSubmit(registerUser)}>
         <p>{errors.form && errors.form.message}</p>
-        <div className="form-group margin-b-0">
-          <label className="text-left" htmlFor="name">
+        <div className="form-group">
+          <label className="text-start" htmlFor="name">
             Name
             <input
               type="text"
@@ -54,8 +53,8 @@ const Register = () => {
             <p>{errors.name && "*Name is required"}</p>
           </label>
         </div>
-        <div className="form-group margin-b-0">
-          <label className="text-left" htmlFor="username">
+        <div className="form-group">
+          <label className="text-start" htmlFor="username">
             Username
             <input
               type="text"
@@ -67,8 +66,8 @@ const Register = () => {
             <p>{errors.username && "*Username is required"}</p>
           </label>
         </div>
-        <div className="form-group margin-b-0">
-          <label className="text-left" htmlFor="password">
+        <div className="form-group">
+          <label className="text-start" htmlFor="password">
             Password
             <input
               type="password"
@@ -82,7 +81,7 @@ const Register = () => {
         </div>
         <button type="submit" className="btn btn-primary" onClick={() => clearErrors()}>Register</button>
         <div className="m-2">
-          <Link to="/" className="text-body">...or log in</Link>
+          <Link to="/" className="text-body text-decoration-none">...or log in</Link>
         </div>
       </form>
     </div>

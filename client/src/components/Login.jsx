@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
-import "./Page.css";
 
 const Login = () => {
   const {
@@ -39,12 +38,12 @@ const Login = () => {
   };
   
   return (
-    <div className="container d-block text-center justify-content-center">
-      <h4 className="mb-3">Log In</h4>
+    <div className="d-flex flex-column align-items-center mt-5 text-center">
+      <h4 className="mb-2">Log In</h4>
       <form onSubmit={handleSubmit(loginUser)}>
         <p>{errors.form && errors.form.message}</p>
-        <div className="form-group margin-b-0">
-          <label className="text-left" htmlFor="username">
+        <div className="form-group">
+          <label className="text-start" htmlFor="username">
             Username
             <input
               type="text"
@@ -56,8 +55,8 @@ const Login = () => {
             <p>{errors.username && "*Username is required"}</p>
           </label>
         </div>
-        <div className="form-group margin-b-0">
-          <label className="text-left" htmlFor="password">
+        <div className="form-group">
+          <label className="text-start" htmlFor="password">
             Password
             <input
               type="password"
@@ -71,7 +70,7 @@ const Login = () => {
         </div>
         <button type="submit" className="btn btn-primary" onClick={() => clearErrors()}>Log In</button>
         <div className="m-2">
-          <Link to="/register" className="text-body">...or create a new account</Link>
+          <Link to="/register" className="text-body text-decoration-none">...or create a new account</Link>
         </div>
       </form>
     </div>

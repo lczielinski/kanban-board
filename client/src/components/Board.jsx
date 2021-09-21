@@ -36,23 +36,15 @@ const Board = () => {
         <div className="card-body">
           <div className="d-flex justify-content-between">
             <h5 className="card-title">{ card.title }</h5>
-            <div
-              type="button"
-              role="button"
-              tabIndex="-1"
-              className="close ml-2"
-              onClick={() => deleteCard(card._id)}
-            >
-              <span>&times;</span>
-            </div>
+            <button type="button" className="btn-close ms-3" onClick={() => deleteCard(card._id)}></button>
           </div>
           { card.description && <p className="card-text">{ card.description }</p> }
           <div className="d-flex justify-content-between">
-          <div type="button" className="btn arrow" onClick={() => revertCard(card._id)}>
-              <span>&#10229;</span>
+            <div type="button" className="btn arrow" onClick={() => revertCard(card._id)}>
+              <span>&#9664;</span>
             </div>
             <div type="button" className="btn arrow" onClick={() => moveCard(card._id)}>
-              <span>&#10230;</span>
+              <span>&#9654;</span>
             </div>
           </div>
         </div>
@@ -161,17 +153,18 @@ const Board = () => {
     return <div className="text-center">Loading...</div>;
   }
 
+  $('#modal').on('shown.bs.modal', function () {
+    $('#cardTitle').trigger('focus')
+  });
+
   return (
-    <div>
+    <div className="container-fluid mb-4 mb-md-0">
       {/* Modal to add a new card */}
-      <div className="modal fade" id="modal" tabIndex="-1" role="dialog">
-        <div className="modal-dialog modal-dialog-centered" role="document">
+      <div className="modal fade" id="modal">
+        <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">Add a new card</h5>
-              <div type="button" className="close" data-dismiss="modal">
-                <span>&times;</span>
-              </div>
             </div>
             <form className="form-group" 
               onSubmit={handleSubmit(addCard)}>
@@ -185,7 +178,6 @@ const Board = () => {
                       className="form-control my-1"
                       id="cardTitle"
                       placeholder="Title"
-                      autoFocus="autofocus"
                     />
                     <p>{errors.cardTitle && "*Card title is required"}</p>
                   </label>
@@ -205,7 +197,7 @@ const Board = () => {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => reset()}>Close</button>
                 <button type="submit" className="btn btn-primary">Add Card</button>
               </div>
             </form>
@@ -214,40 +206,48 @@ const Board = () => {
       </div>
 
       {/* Title with person"s name */}
-      <h1 className="text-center m-4">{user.name}&apos;s To-Do List</h1>
-      <div className="d-flex justify-content-center">
-        <div type="button" className="btn" onClick={logout}>Log Out</div>
+      <div className="my-4">
+        <h1 className="text-center my-2">{user.name}&apos;s To-Do List</h1>
+        <div className="d-flex justify-content-center">
+          <div type="button" className="btn" onClick={logout}>Log Out</div>
+        </div>
       </div>
 
-      <div className="d-flex justify-content-center">
-        {/* To Do List */}
-        <div className="card m-4 w-25 shadow-sm">
-          <div className="card-body">
-            <h4 className="card-title text-center mb-5">To Do</h4>
-            { toDoTasks }
-          </div>
+      <div className="row row-cols-1 row-cols-md-3 g-4">
+        <div className="col">
+          {/* To Do List */}
+          <div className="card mx-4 my-md-4 shadow-sm">
+            <div className="card-body">
+              <h4 className="card-title text-center mb-5">To Do</h4>
+              { toDoTasks }
+            </div>
 
-          {/* Button to trigger modal */}
-          <div className="d-flex justify-content-center">
-            <div className="btn-primary btn-circle text-center m-3" data-toggle="modal" data-target="#modal">
-              <span>+</span>
+            {/* Button to trigger modal */}
+            <div className="d-flex justify-content-center">
+              <div className="btn-primary btn-circle text-center m-3" data-bs-toggle="modal" data-bs-target="#modal">
+                <span>+</span>
+              </div>
             </div>
           </div>
         </div>
 
         {/* In Progress List */}
-        <div className="card m-4 w-25 shadow-sm">
-          <div className="card-body">
-            <h4 className="card-title text-center mb-5">In Progress</h4>
-            { inProgressTasks }
+        <div className="col">
+          <div className="card mx-4 my-md-4 shadow-sm">
+            <div className="card-body">
+              <h4 className="card-title text-center mb-5">In Progress</h4>
+              { inProgressTasks }
+            </div>
           </div>
         </div>
 
         {/* Done List */}
-        <div className="card m-4 w-25 shadow-sm">
-          <div className="card-body">
-            <h4 className="card-title text-center mb-5">Done</h4>
-            { completedTasks }
+        <div className="col">
+          <div className="card mx-4 my-md-4 shadow-sm">
+            <div className="card-body">
+              <h4 className="card-title text-center mb-5">Done</h4>
+              { completedTasks }
+            </div>
           </div>
         </div>
       </div>
