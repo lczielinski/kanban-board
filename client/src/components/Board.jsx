@@ -40,12 +40,12 @@ const Board = () => {
           </div>
           { card.description && <p className="card-text">{ card.description }</p> }
           <div className="d-flex justify-content-between">
-            <div type="button" className="btn arrow" onClick={() => revertCard(card._id)}>
+            <button type="button" className="btn arrow" onClick={() => revertCard(card._id)}>
               <span>&#9664;</span>
-            </div>
-            <div type="button" className="btn arrow" onClick={() => moveCard(card._id)}>
+            </button>
+            <button type="button" className="btn arrow" onClick={() => moveCard(card._id)}>
               <span>&#9654;</span>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -209,7 +209,7 @@ const Board = () => {
       <div className="my-4">
         <h1 className="text-center my-2">{user.name}&apos;s To-Do List</h1>
         <div className="d-flex justify-content-center">
-          <div type="button" className="btn" onClick={logout}>Log Out</div>
+          <button type="button" className="btn" onClick={logout}>Log Out</button>
         </div>
       </div>
 
