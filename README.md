@@ -1,1 +1,1 @@
-# [kanban-board](https://github.com/lczielinski)
+# [kanban-board](lzielinski-kanban-board.herokuapp.com)
